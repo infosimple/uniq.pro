@@ -16,7 +16,7 @@ class CreateMessagesTable extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('text');
+            $table->text('text');
             $table->integer('keyboard_id')->nullable();
             $table->integer('bot_id');
         });

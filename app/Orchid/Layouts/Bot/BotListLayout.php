@@ -46,17 +46,17 @@ class BotListLayout extends Table
 
             TD::set('', 'Клавиатуры')
                 ->render(function (Bot $bot) {
-                    return Link::make(85)
+                    return Link::make($bot->keyboard->count())
                         ->route('bot.keyboard.list', $bot->id);
                 }),
             TD::set('', 'Сообщения')
                 ->render(function (Bot $bot) {
-                    return Link::make(85)
+                    return Link::make($bot->message->count())
                         ->route('bot.message.list', $bot->id);
                 }),
             TD::set('', 'Группы сообщений')
                 ->render(function (Bot $bot) {
-                    return Link::make(85)
+                    return Link::make($bot->messagegroup->count())
                         ->route('bot.messagegroup.list', $bot->id);
                 }),
             TD::set('id', 'Действия')

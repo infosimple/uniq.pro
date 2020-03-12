@@ -3,9 +3,13 @@
 namespace App\Orchid\Screens\Bot\MessageGroup;
 
 use App\Models\Bot\Bot;
+use App\Models\Bot\Message;
+use App\Models\Bot\MessageGroup;
+use App\Orchid\Layouts\Bot\MessageGroup\MessageGroupListLayout;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
+use Orchid\Support\Facades\Alert;
 
 class MessageGroupListScreen extends Screen
 {
@@ -16,13 +20,17 @@ class MessageGroupListScreen extends Screen
     /**
      * Получаем id бота
      */
-    public $idBot = "";
+    public $id = "";
+
 
     public function query(Request $request): array
     {
-        $this->idBot = $request->bot;
-        $this->description = Bot::find($this->idBot)->name;
-        return [];
+        $this->id = $request->bot;
+        $this->description = Bot::find($this->id)->name;
+        return [
+            'messagegroup' => MessageGroup::where('bot_id', $this->id)->paginate(10),
+            'message' => Message::where('bot_id', $this->id)
+        ];
     }
 
     /**
@@ -52,6 +60,16 @@ class MessageGroupListScreen extends Screen
      */
     public function layout(): array
     {
-        return [];
+        return [
+            MessageGroupListLayout::class
+        ];
+    }
+
+    public function remove(Request $request)
+    {
+        MessageGroup::findOrFail($request->get('id'))
+            ->delete();
+        Alert::info('Вы успешно удалили группу сообщений!');
+        return back();
     }
 }

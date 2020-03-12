@@ -8,11 +8,8 @@ use App\Models\Bot\Button as MButton;
 use App\Models\Bot\KeyBoard;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Link;
-use Orchid\Screen\Field;
 use Orchid\Screen\Fields\Input;
-use Orchid\Screen\Fields\Matrix;
 use Orchid\Screen\Fields\Select;
-use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Layout;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
@@ -31,20 +28,22 @@ class KeyBoardEditScreen extends Screen
      */
     public $exists = false;
 
-    public function query(Request $request, KeyBoard $keyBoard = null): array
+    public function query(Request $request, KeyBoard $keyboard = null): array
     {
-        if (!$keyBoard) {
+        if (!$keyboard) {
             abort(404);
         }
-        $this->exists = $keyBoard->exists;
+        $this->exists = $keyboard->exists;
 
         if ($this->exists) {
-            $this->name = 'Изменение клавиатуры: ' . $keyBoard->name;
+            $this->name = 'Изменение клавиатуры: ' . $keyboard->name;
+            $keyboard->buttons = json_decode($keyboard->buttons);
         }
         $this->id = $request->bot;
         $this->description = Bot::find($this->id)->name;
+
         return [
-            'keyBoard' => $keyBoard
+            'keyboard' => $keyboard
         ];
     }
 
@@ -57,6 +56,7 @@ class KeyBoardEditScreen extends Screen
     public function commandBar(): array
     {
         return [
+
             Link::make('Назад')
                 ->route('bot.keyboard.list', $this->id)
                 ->icon('icon-arrow-left')
@@ -89,6 +89,7 @@ class KeyBoardEditScreen extends Screen
      */
     public function layout(): array
     {
+
         return [
             Layout::rows([
                 Input::make('keyboard.bot_id')
@@ -99,14 +100,27 @@ class KeyBoardEditScreen extends Screen
                     ->placeholder('Главная клава')
                     ->help('Укажите название будущей клавиатуры')
                     ->required(),
-                    Select::make('keyboard.buttons')
-                        ->fromQuery(MButton::where('bot_id', $this->id), 'name', 'id')
-                        ->empty('Не выбрано'),
-                    Select::make('keyboard.buttons')
-                        ->fromQuery(MButton::where('bot_id', $this->id), 'name', 'id'),
-                    Select::make('keyboard.buttons')
-                        ->multiple()
-                        ->fromQuery(MButton::where('bot_id', $this->id), 'name', 'id')
+                Select::make('keyboard.buttons.0.')
+                    ->multiple()
+                    ->fromQuery(MButton::where('bot_id', $this->id), 'command')
+                    ->title('Первый ряд кнопок')
+                    ->help('Не более 4 шт'),
+                Select::make('keyboard.buttons.1.')
+                    ->multiple()
+                    ->fromQuery(MButton::where('bot_id', $this->id), 'command')
+                    ->title('Второй ряд кнопок'),
+                Select::make('keyboard.buttons.2.')
+                    ->multiple()
+                    ->fromQuery(MButton::where('bot_id', $this->id), 'command')
+                    ->title('Третий ряд кнопок'),
+                Select::make('keyboard.buttons.3.')
+                    ->multiple()
+                    ->fromQuery(MButton::where('bot_id', $this->id), 'command')
+                    ->title('Четвертый ряд кнопок'),
+                Select::make('keyboard.buttons.4.')
+                    ->multiple()
+                    ->fromQuery(MButton::where('bot_id', $this->id), 'command')
+                    ->title('Пятый ряд кнопок')
             ]),
 
         ];
@@ -114,15 +128,26 @@ class KeyBoardEditScreen extends Screen
 
     public function createOrUpdate(Request $request, KeyBoard $keyboard)
     {
-        $data = $request->keyboard; //Получаем все данные кнопки
-        // Если есть методы, то преобразуем их в массив и добавляем в кнопку
-        dd($data);
+        $message = [
+            'keyboard.buttons.required' => 'Необходимо выбрать хотябы одну кнопку',
+            'keyboard.buttons.*.max' => 'Не более :max кнопок в строке',
+        ];
+        $request->validate([
+            'keyboard.buttons.*' => 'max:4',
+           'keyboard.buttons' => 'required'
+        ], $message);
+
+        $data = $request->keyboard; //Получаем все данные клавиатуры
+        $data['buttons'] = collect($data['buttons'])->values()->toJson(); //декодируем кнопки в json
         $keyboard->fill($data)->save();
-        Alert::info('Вы успешно создали кнопку: ' . $data['name']);
+
+
         if ($request->id == 'createOrUpdate') {
-            return redirect()->route('bot.button.list', $request->bot);
+            Alert::info('Вы успешно создали клавиатуру: ' . $data['name']);
+            return redirect()->route('bot.keyboard.list', $request->bot);
         } else {
-            return redirect()->route('bot.button.edit', [$request->bot, $request->id]);
+            Alert::info('Вы успешно изменили клавиатуру');
+            return redirect()->route('bot.keyboard.edit', [$request->bot, $request->id]);
         }
     }
 
@@ -134,5 +159,4 @@ class KeyBoardEditScreen extends Screen
 
         return redirect()->route('bot.keyboard.list', $request->bot);
     }
-
 }

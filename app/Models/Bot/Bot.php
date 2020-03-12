@@ -30,4 +30,25 @@ class Bot extends Model
     {
         return $this->hasMany(Button::class);
     }
+    public function keyboard()
+    {
+        return $this->hasMany(KeyBoard::class);
+    }
+    public function message()
+    {
+        return $this->hasMany(Message::class);
+    }
+    public function messagegroup()
+    {
+        return $this->hasMany(MessageGroup::class);
+    }
+
+    public function delete()
+    {
+        $this->button()->delete();
+        $this->keyboard()->delete();
+        $this->message()->delete();
+        $this->messagegroup()->delete();
+        return parent::delete();
+    }
 }

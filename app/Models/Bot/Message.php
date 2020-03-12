@@ -21,7 +21,7 @@ class Message extends Model
 
     public function keyboard()
     {
-        return $this->hasOne('Models\Bot\KeyBoard');
+        return $this->hasOne(KeyBoard::class, 'id', 'keyboard_id');
     }
 
 }

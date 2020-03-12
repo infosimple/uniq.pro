@@ -36,13 +36,13 @@ class ButtonListLayout extends Table
                 ->render(function (Button $button) {
                     switch ($button->color) {
                         case 'red' :
-                            return 'Красный';
+                            return "<span class='text-danger'>Красный</span>";
                         case 'white' :
-                            return 'Белый';
+                            return 'Без цвета';
                         case 'blue' :
-                            return 'Синий';
+                            return "<span class='text-info'>Синий</span>";
                         case 'green' :
-                            return 'Зеленый';
+                            return "<span class='text-success'>Зеленый</span>";
                         default:
                             return '';
                     }

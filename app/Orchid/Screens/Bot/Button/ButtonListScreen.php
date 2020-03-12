@@ -19,15 +19,15 @@ class ButtonListScreen extends Screen
     /**
      * Получаем id бота
      */
-    public $idBot = "";
+    public $id = "";
 
     public function query(Request $request): array
     {
-        $this->idBot = $request->bot;
-        $this->description = Bot::find($this->idBot)->name;
+        $this->id = $request->bot;
+        $this->description = Bot::find($this->id)->name;
 
         return [
-            'button' => Button::where('bot_id', $request->bot)->paginate()
+            'button' => Button::where('bot_id', $this->id)->paginate()
         ];
     }
 
@@ -45,7 +45,7 @@ class ButtonListScreen extends Screen
                 ->class('btn btn-default'),
 
             Link::make('Создать кнопку')
-                ->route('bot.button.edit', $this->request->bot)
+                ->route('bot.button.edit', $this->id)
                 ->icon('icon-plus')
                 ->class('btn btn-success')
         ];

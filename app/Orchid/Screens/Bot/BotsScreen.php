@@ -5,6 +5,7 @@ namespace App\Orchid\Screens\Bot;
 use App\Models\Bot\Bot;
 use App\Orchid\Layouts\Bot\BotListLayout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
@@ -34,7 +35,7 @@ class BotsScreen extends Screen
     public function query(): array
     {
         return [
-            'bot' => Bot::with('button')->paginate()
+            'bot' => Bot::with(['button', 'keyboard', 'message', 'messagegroup'])->paginate(10)
         ];
     }
 
@@ -72,8 +73,10 @@ class BotsScreen extends Screen
 
     public function remove(Request $request)
     {
-        Bot::findOrFail($request->get('id'))
+
+        Bot::findOrFail($request->id)
             ->delete();
+        File::delete('..\app\Core\Bot\Method\Repository' . $request->id . '.php');
         Alert::info('Вы успешно удалили бота!');
         return back();
     }

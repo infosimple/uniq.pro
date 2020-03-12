@@ -4,6 +4,9 @@ namespace App\Orchid\Screens\Bot\Telegram;
 
 use App\Models\Bot\Bot;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+use Orchid\Support\Facades\Alert;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
@@ -19,10 +22,12 @@ class BotEditScreen extends Screen
     //Переменная определяющая редактирование или создание бота
     public $exists = false;
 
-
-
-    public function query(Bot $bot): array
+    public function query(Bot $bot = null): array
     {
+        if (!$bot){
+            abort(404);
+        }
+
         $this->exists = $bot->exists;
         if ($this->exists) {
             $this->name = $bot->name;
@@ -62,6 +67,7 @@ class BotEditScreen extends Screen
             Button::make('Удалить')
                 ->icon('icon-trash')
                 ->class('btn btn-error btn-block')
+                ->confirm(__('Вы уверены, что хотите удалить бота?'))
                 ->method('remove')
                 ->canSee($this->exists),
         ];
@@ -87,6 +93,26 @@ class BotEditScreen extends Screen
 
     public function createOrUpdate(Bot $bot, Request $request)
     {
-        dd($request->bot);
+        $dataBot = $request->bot;
+
+        $exists = $bot->exists;
+        $bot->fill($dataBot)->save();
+        if (!$exists) {
+            Artisan::call('make:model Core/Bot/Method/Repository' . $bot->id);
+            Alert::info('Вы успешно создали Telegram бота: ' . $request->bot['name']);
+            return redirect()->route('bots.list');
+        } else {
+            Alert::info('Вы успешно обновили Telegram бота');
+            return redirect()->route('bot.telegram.edit', $bot->id);
+        }
+    }
+    public function remove(Bot $bot)
+    {
+        File::delete('..\app\Core\Bot\Method\Repository' . $bot->id . '.php');
+        $bot->delete()
+            ? Alert::info('Вы успешно удалили бота')
+            : Alert::warning('Произошла ошибка');
+
+        return redirect()->route('bots.list');
     }
 }

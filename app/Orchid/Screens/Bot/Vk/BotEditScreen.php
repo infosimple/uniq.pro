@@ -4,6 +4,8 @@ namespace App\Orchid\Screens\Bot\Vk;
 
 use App\Models\Bot\Bot;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
@@ -21,9 +23,11 @@ class BotEditScreen extends Screen
     public $exists = false;
 
 
-    public function query(Bot $bot): array
+    public function query(Bot $bot = null): array
     {
-
+        if (!$bot){
+            abort(404);
+        }
 
         $this->exists = $bot->exists;
         if ($this->exists) {
@@ -66,6 +70,7 @@ class BotEditScreen extends Screen
 
             Button::make('Удалить')
                 ->icon('icon-trash')
+                ->confirm(__('Вы уверены, что хотите удалить бота?'))
                 ->class('btn btn-danger btn-block')
                 ->method('remove')
                 ->canSee($this->exists),
@@ -115,14 +120,22 @@ class BotEditScreen extends Screen
             'version' => $request->bot['version']
         ];
         $dataBot['soc'] = 'vk';
+        $exists = $bot->exists;
         $bot->fill($dataBot)->save();
-        Alert::info('Вы успешно создали Vk бота: ' . $request->bot['name']);
+        if (!$exists) {
+            Artisan::call('make:model Core/Bot/Method/Repository' . $bot->id);
+            Alert::info('Вы успешно создали Vk бота: ' . $request->bot['name']);
+            return redirect()->route('bots.list');
+        } else {
+            Alert::info('Вы успешно обновили Vk бота');
+            return redirect()->route('bot.vk.edit', $bot->id);
+        }
 
-        return redirect()->route('bots.list');
     }
 
     public function remove(Bot $bot)
     {
+        File::delete('..\app\Core\Bot\Method\Repository' . $bot->id . '.php');
         $bot->delete()
             ? Alert::info('Вы успешно удалили бота')
             : Alert::warning('Произошла ошибка');

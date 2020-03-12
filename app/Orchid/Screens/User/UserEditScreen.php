@@ -64,8 +64,8 @@ class UserEditScreen extends Screen
      */
     public function commandBar(): array
     {
-        return [
 
+        return [
             DropDown::make(__('Settings'))
                 ->icon('icon-open')
                 ->list([

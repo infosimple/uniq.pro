@@ -132,10 +132,12 @@ class ButtonEditScreen extends Screen
             $dataButton['methods'] = $methods;
         }
         $button->fill($dataButton)->save();
-        Alert::info('Вы успешно создали кнопку: ' . $dataButton['name']);
+
         if ($request->id == 'createOrUpdate') {
+            Alert::info('Вы успешно создали кнопку: ' . $dataButton['name']);
             return redirect()->route('bot.button.list', $request->bot);
         }else{
+            Alert::info('Вы успешно изменили кнопку');
             return redirect()->route('bot.button.edit', [$request->bot, $request->id]);
         }
     }

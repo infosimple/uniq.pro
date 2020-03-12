@@ -3,9 +3,12 @@
 namespace App\Orchid\Screens\Bot\Message;
 
 use App\Models\Bot\Bot;
+use App\Models\Bot\Message;
+use App\Orchid\Layouts\Bot\Message\MessageListLayout;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
+use Orchid\Support\Facades\Alert;
 
 class MessageListScreen extends Screen
 {
@@ -16,13 +19,15 @@ class MessageListScreen extends Screen
     /**
      * Получаем id бота
      */
-    public $idBot = "";
+    public $id = "";
 
     public function query(Request $request): array
     {
-        $this->idBot = $request->bot;
-        $this->description = Bot::find($this->idBot)->name;
-        return [];
+        $this->id = $request->bot;
+        $this->description = Bot::find($this->id)->name;
+        return [
+            'message' => Message::where('bot_id', $this->id)->paginate(10)
+        ];
     }
 
     /**
@@ -39,7 +44,7 @@ class MessageListScreen extends Screen
                 ->class('btn btn-default'),
 
             Link::make('Создать сообщение')
-                ->route('bot.message.edit', $this->request->bot)
+                ->route('bot.message.edit', $this->id)
                 ->icon('icon-plus')
                 ->class('btn btn-success')
         ];
@@ -52,6 +57,15 @@ class MessageListScreen extends Screen
      */
     public function layout(): array
     {
-        return [];
+        return [
+            MessageListLayout::class
+        ];
+    }
+    public function remove(Request $request)
+    {
+        Message::findOrFail($request->get('id'))
+            ->delete();
+        Alert::info('Вы успешно удалили сообщение!');
+        return back();
     }
 }

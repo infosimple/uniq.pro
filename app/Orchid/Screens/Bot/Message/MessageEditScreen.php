@@ -3,11 +3,17 @@
 namespace App\Orchid\Screens\Bot\Message;
 
 use App\Models\Bot\Bot;
+use App\Models\Bot\KeyBoard;
 use App\Models\Bot\Message;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\Select;
+use Orchid\Screen\Fields\TextArea;
+use Orchid\Screen\Layout;
 use Orchid\Screen\Screen;
+use Orchid\Support\Facades\Alert;
 
 class MessageEditScreen extends Screen
 {
@@ -17,21 +23,25 @@ class MessageEditScreen extends Screen
     /**
      * Получаем id бота
      */
-    public $idBot = "";
+    private $id = '';
     /**
-     * Проверка на создание или редактирование сообщения
+     * Проверка на создание или редактирование кнопки
      */
     public $exists = false;
 
-    public function query(Request $request, Message $message): array
-    {        $this->exists = $message->exists;
+    public function query(Request $request, Message $message = null): array
+    {
+        if (!$message) {
+            abort(404);
+        }
+        $this->exists = $message->exists;
 
-        if($this->exists){
+        if ($this->exists) {
             $this->name = 'Изменение сообщения: ' . $message->name;
         }
+        $this->id = $request->bot;
+        $this->description = Bot::find($this->id)->name;
 
-        $this->idBot = $request->bot;
-        $this->description = Bot::find($this->idBot)->name;
         return [
             'message' => $message
         ];
@@ -46,7 +56,7 @@ class MessageEditScreen extends Screen
     {
         return [
             Link::make('Назад')
-                ->route('bot.message.list', $this->idBot)
+                ->route('bot.message.list', $this->id)
                 ->icon('icon-arrow-left')
                 ->class('btn btn-default'),
 
@@ -77,6 +87,48 @@ class MessageEditScreen extends Screen
      */
     public function layout(): array
     {
-        return [];
+        return [
+            Layout::rows([
+                Input::make('message.bot_id')
+                    ->type('hidden')
+                    ->value($this->id),
+                Input::make('message.name')
+                    ->title('Название сообщения')
+                    ->placeholder('Приветсвтие')
+                    ->required(),
+                TextArea::make('message.text')
+                    ->title('Текст сообщения')
+                    ->placeholder('Добро пожаловать мой друг')
+                    ->required(),
+                Select::make('message.keyboard_id')
+                    ->title('Клавиатура')
+                    ->fromQuery(KeyBoard::where('bot_id', $this->id), 'name')
+                    ->empty()
+            ])
+        ];
     }
+
+    public function createOrUpdate(Request $request, Message $message)
+    {
+        $data = $request->message;
+        $message->fill($data)->save();
+        if ($request->id == 'createOrUpdate') {
+            Alert::info('Вы успешно создали сообщение: ' . $data['name']);
+            return redirect()->route('bot.message.list', $request->bot);
+        } else {
+            Alert::info('Вы успешно изменили сообщение');
+            return redirect()->route('bot.message.edit', [$request->bot, $request->id]);
+        }
+
+    }
+
+    public function remove(Request $request, Message $message)
+    {
+        $message->delete()
+            ? Alert::info('Вы успешно удалили сообщение')
+            : Alert::warning('Произошла ошибка');
+
+        return redirect()->route('bot.message.list', $request->bot);
+    }
+
 }

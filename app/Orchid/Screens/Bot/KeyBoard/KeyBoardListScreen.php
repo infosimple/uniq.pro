@@ -3,7 +3,11 @@
 namespace App\Orchid\Screens\Bot\KeyBoard;
 
 use App\Models\Bot\Bot;
+use App\Models\Bot\KeyBoard;
+use App\Orchid\Layouts\Bot\KeyBoard\KeyBoardListLayout;
 use Illuminate\Http\Request;
+use Orchid\Support\Facades\Alert;
+use Orchid\Screen\Actions\Button as OButton;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 
@@ -16,13 +20,16 @@ class KeyBoardListScreen extends Screen
     /**
      * Получаем id бота
      */
-    public $idBot = "";
+    public $id = '';
 
     public function query(Request $request): array
     {
-        $this->idBot = $request->bot;
-        $this->description = Bot::find($this->idBot)->name;
-        return [];
+        $this->id = $request->bot;
+        $this->description = Bot::find($this->id)->name;
+
+        return [
+            'keyboard' => KeyBoard::where('bot_id', $this->id)->paginate(10)
+        ];
     }
 
     /**
@@ -37,9 +44,8 @@ class KeyBoardListScreen extends Screen
                 ->route('bots.list')
                 ->icon('icon-arrow-left')
                 ->class('btn btn-default'),
-
             Link::make('Создать клавиатуру')
-                ->route('bot.keyboard.edit', $this->request->bot)
+                ->route('bot.keyboard.edit', $this->id)
                 ->icon('icon-plus')
                 ->class('btn btn-success')
         ];
@@ -52,6 +58,16 @@ class KeyBoardListScreen extends Screen
      */
     public function layout(): array
     {
-        return [];
+        return [
+            KeyBoardListLayout::class
+        ];
     }
+    public function remove(Request $request)
+    {
+        KeyBoard::findOrFail($request->get('id'))
+            ->delete();
+        Alert::info('Вы успешно удалили клавиатуру!');
+        return back();
+    }
+
 }
