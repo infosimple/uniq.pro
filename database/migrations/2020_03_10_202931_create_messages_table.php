@@ -18,6 +18,8 @@ class CreateMessagesTable extends Migration
             $table->string('name');
             $table->text('text');
             $table->integer('keyboard_id')->nullable();
+            $table->string('method')->nullable();
+            $table->text('method_text')->nullable();
             $table->integer('bot_id');
         });
     }

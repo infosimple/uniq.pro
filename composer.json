@@ -12,10 +12,12 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
         "laravel/tinker": "^2.0",
-        "orchid/platform": "^6.11"
+        "orchid/platform": "^6.11",
+        "vkcom/vk-php-sdk": "^5.101"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",
+        "barryvdh/laravel-ide-helper": "^2.6",
         "facade/ignition": "^1.4",
         "fzaninotto/faker": "^1.9.1",
         "laravel/ui": "^1.0",

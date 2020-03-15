@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9dc326097a866b9c6a00e39d3fe369f",
+    "content-hash": "26691e33978f49c25f971ab6168811a3",
     "packages": [
         {
             "name": "davejamesmiller/laravel-breadcrumbs",
@@ -3282,17 +3282,56 @@
             "time": "2019-10-24T08:53:34+00:00"
         },
         {
-            "name": "vlucas/phpdotenv",
-            "version": "v3.6.0",
+            "name": "vkcom/vk-php-sdk",
+            "version": "5.101.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "1bdf24f065975594f6a117f0f1f6cabf1333b156"
+                "url": "https://github.com/VKCOM/vk-php-sdk.git",
+                "reference": "46a8f76503050c0c6730359fc234a4d6448b8653"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/1bdf24f065975594f6a117f0f1f6cabf1333b156",
-                "reference": "1bdf24f065975594f6a117f0f1f6cabf1333b156",
+                "url": "https://api.github.com/repos/VKCOM/vk-php-sdk/zipball/46a8f76503050c0c6730359fc234a4d6448b8653",
+                "reference": "46a8f76503050c0c6730359fc234a4d6448b8653",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6",
+                "vkcom/vk-api-schema": "^5.80.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "VK\\": "src/VK"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "VK PHP SDK",
+            "homepage": "https://github.com/VKCOM/vk-php-sdk",
+            "keywords": [
+                "sdk",
+                "vk"
+            ],
+            "time": "2019-08-16T12:13:20+00:00"
+        },
+        {
+            "name": "vlucas/phpdotenv",
+            "version": "v3.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vlucas/phpdotenv.git",
+                "reference": "8f7961f7b9deb3b432452c18093cf16f88205902"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/8f7961f7b9deb3b432452c18093cf16f88205902",
+                "reference": "8f7961f7b9deb3b432452c18093cf16f88205902",
                 "shasum": ""
             },
             "require": {
@@ -3301,7 +3340,11 @@
                 "symfony/polyfill-ctype": "^1.9"
             },
             "require-dev": {
+                "ext-filter": "*",
                 "phpunit/phpunit": "^4.8.35 || ^5.0 || ^6.0 || ^7.0"
+            },
+            "suggest": {
+                "ext-filter": "Required to use the boolean validator."
             },
             "type": "library",
             "extra": {
@@ -3336,7 +3379,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2019-09-10T21:37:39+00:00"
+            "time": "2020-03-12T13:44:00+00:00"
         },
         {
             "name": "watson/active",
@@ -3648,16 +3691,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.10.0",
+            "version": "1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "472c917b2a083ec7d2fa25c55fd099d1300e2515"
+                "reference": "b912a45da3e2b22f5cb5a23e441b697a295ba011"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/472c917b2a083ec7d2fa25c55fd099d1300e2515",
-                "reference": "472c917b2a083ec7d2fa25c55fd099d1300e2515",
+                "url": "https://api.github.com/repos/composer/composer/zipball/b912a45da3e2b22f5cb5a23e441b697a295ba011",
+                "reference": "b912a45da3e2b22f5cb5a23e441b697a295ba011",
                 "shasum": ""
             },
             "require": {
@@ -3724,7 +3767,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2020-03-10T13:08:05+00:00"
+            "time": "2020-03-13T19:34:27+00:00"
         },
         {
             "name": "composer/semver",

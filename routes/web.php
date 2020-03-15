@@ -23,3 +23,14 @@ Auth::routes([
     'reset' => false,
     'verification' => false,
 ]);
+
+Route::get('/clear', function() {
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    return "Кэш очищен.";
+});
+
+
+Route::post('vk/callback/{id}', 'VkApiCallbackController@execute');

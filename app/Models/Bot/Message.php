@@ -16,8 +16,15 @@ class Message extends Model
         'name',
         'text',
         'keyboard_id',
-        'bot_id'
+        'bot_id',
+        'method',
+        'method_text'
     ];
+
+    protected $casts = [
+        'response_type' => 'array',
+    ];
+
 
     public function keyboard()
     {

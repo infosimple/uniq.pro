@@ -103,7 +103,12 @@ class MessageEditScreen extends Screen
                 Select::make('message.keyboard_id')
                     ->title('Клавиатура')
                     ->fromQuery(KeyBoard::where('bot_id', $this->id), 'name')
-                    ->empty()
+                    ->empty(),
+                Input::make('message.method')
+                    ->title('Метод обработки сообщения')
+                    ->help("email или start"),
+                TextArea::make('message.method_text')
+                    ->title('Текст если не выполнен метод')
             ])
         ];
     }

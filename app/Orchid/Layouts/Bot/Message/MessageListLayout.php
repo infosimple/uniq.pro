@@ -42,8 +42,24 @@ class MessageListLayout extends Table
                         return '<span class="icon-ban"></span>';
                     }
                 }),
-
-
+            TD::set('method', 'Метода')
+                ->align(TD::ALIGN_CENTER)
+                ->render(function (Message $message) {
+                    if ($message->method){
+                        return $message->method;
+                    }else{
+                        return '<span class="icon-ban"></span>';
+                    }
+                }),
+            TD::set('method_text', 'Текст метода')
+                ->align(TD::ALIGN_CENTER)
+                ->render(function (Message $message) {
+                    if ($message->method_text){
+                        return mb_substr($message->method_text, 0, 60);
+                    }else{
+                        return '<span class="icon-ban"></span>';
+                    }
+                }),
             TD::set('id', 'Действия')
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')
