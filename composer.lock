@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "26691e33978f49c25f971ab6168811a3",
+    "content-hash": "8b94859998f992c8b925455e667f4510",
     "packages": [
         {
             "name": "davejamesmiller/laravel-breadcrumbs",
@@ -3283,16 +3283,16 @@
         },
         {
             "name": "vkcom/vk-php-sdk",
-            "version": "5.101.0",
+            "version": "5.80.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/VKCOM/vk-php-sdk.git",
-                "reference": "46a8f76503050c0c6730359fc234a4d6448b8653"
+                "reference": "4d270e1c004aec7cc9043257c9394ae1ccde65ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/VKCOM/vk-php-sdk/zipball/46a8f76503050c0c6730359fc234a4d6448b8653",
-                "reference": "46a8f76503050c0c6730359fc234a4d6448b8653",
+                "url": "https://api.github.com/repos/VKCOM/vk-php-sdk/zipball/4d270e1c004aec7cc9043257c9394ae1ccde65ab",
+                "reference": "4d270e1c004aec7cc9043257c9394ae1ccde65ab",
                 "shasum": ""
             },
             "require": {
@@ -3318,7 +3318,7 @@
                 "sdk",
                 "vk"
             ],
-            "time": "2019-08-16T12:13:20+00:00"
+            "time": "2018-07-02T11:14:15+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -6455,7 +6455,9 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.2"
+        "php": "^7.2",
+        "ext-curl": "*",
+        "ext-json": "*"
     },
     "platform-dev": []
 }

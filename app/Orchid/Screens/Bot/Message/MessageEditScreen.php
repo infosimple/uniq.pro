@@ -9,8 +9,11 @@ use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\Quill;
 use Orchid\Screen\Fields\Select;
+use Orchid\Screen\Fields\SimpleMDE;
 use Orchid\Screen\Fields\TextArea;
+use Orchid\Screen\Fields\TinyMCE;
 use Orchid\Screen\Layout;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
@@ -96,10 +99,9 @@ class MessageEditScreen extends Screen
                     ->title('Название сообщения')
                     ->placeholder('Приветсвтие')
                     ->required(),
-                TextArea::make('message.text')
+                SimpleMDE::make('message.text')
                     ->title('Текст сообщения')
-                    ->placeholder('Добро пожаловать мой друг')
-                    ->required(),
+                    ->placeholder('Добро пожаловать мой друг'),
                 Select::make('message.keyboard_id')
                     ->title('Клавиатура')
                     ->fromQuery(KeyBoard::where('bot_id', $this->id), 'name')

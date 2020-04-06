@@ -42,7 +42,7 @@ class UserListScreen extends Screen
     public function query(): array
     {
         return [
-            'users' => User::with('roles')
+            'users' => User::with(['roles', 'vkuser'])
                 ->filters()
                 ->filtersApplySelection(UserFiltersLayout::class)
                 ->defaultSort('id', 'desc')
@@ -57,7 +57,9 @@ class UserListScreen extends Screen
      */
     public function commandBar(): array
     {
-        return [];
+        return [
+
+        ];
     }
 
     /**
@@ -98,7 +100,6 @@ class UserListScreen extends Screen
     public function saveUser(User $user, Request $request)
     {
         $user->fill($request->get('user'))
-            ->replaceRoles($request->input('user.roles'))
             ->save();
 
         Toast::info(__('User was saved.'));

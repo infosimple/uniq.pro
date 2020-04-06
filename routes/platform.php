@@ -21,6 +21,8 @@ use App\Orchid\Screens\Bot\Message\MessageListScreen;
 use App\Orchid\Screens\Bot\Message\MessageEditScreen;
 use App\Orchid\Screens\Bot\MessageGroup\MessageGroupListScreen;
 use App\Orchid\Screens\Bot\MessageGroup\MessageGroupEditScreen;
+use App\Orchid\Screens\Bot\Vk\Users\VkUserEditScreen;
+use App\Orchid\Screens\Bot\Vk\Users\VkUserListScreen;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +77,11 @@ $this->router->screen('bot/telegram', TelegramBotEditScreen::class)->name('bot.t
 $this->router->screen('bot/vk/{bot}', VkBotEditScreen::class)->name('bot.vk.edit');
 $this->router->screen('bot/vk', VkBotEditScreen::class)->name('bot.vk.create');
 
+$this->router->screen('vk/user/{id}', VkUserEditScreen::class)->name('user.vk.edit');
+$this->router->screen('vk/users', VkUserListScreen::class)->name('user.vk.list');
+
+$this->router->screen('telegram/user/{id}', TelegramUserEditScreen::class)->name('user.telegram.edit');
+$this->router->screen('telegram/users', TelegramUserListScreen::class)->name('user.telegram.list');
 
 
 

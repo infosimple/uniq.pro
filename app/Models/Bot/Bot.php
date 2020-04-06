@@ -26,6 +26,8 @@ class Bot extends Model
         'config'       => 'array',
     ];
 
+    public $timestamps = false;
+
     public function button()
     {
         return $this->hasMany(Button::class);
@@ -50,5 +52,10 @@ class Bot extends Model
         $this->message()->delete();
         $this->messagegroup()->delete();
         return parent::delete();
+    }
+
+    public static function getBotSocial($soc)
+    {
+        return static::where('soc', $soc)->first();
     }
 }

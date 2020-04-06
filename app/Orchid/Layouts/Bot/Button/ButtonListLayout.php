@@ -35,13 +35,13 @@ class ButtonListLayout extends Table
             TD::set('color', 'Цвет')
                 ->render(function (Button $button) {
                     switch ($button->color) {
-                        case 'red' :
+                        case 'negative' :
                             return "<span class='text-danger'>Красный</span>";
-                        case 'white' :
+                        case 'secondary' :
                             return 'Без цвета';
-                        case 'blue' :
+                        case 'primary' :
                             return "<span class='text-info'>Синий</span>";
-                        case 'green' :
+                        case 'positive' :
                             return "<span class='text-success'>Зеленый</span>";
                         default:
                             return '';

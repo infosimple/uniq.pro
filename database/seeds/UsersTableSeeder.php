@@ -12,17 +12,20 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $permissions = Dashboard::getPermission()
-            ->collapse()
-            ->reduce(static function (Collection $permissions, array $item) {
-                return $permissions->put($item['slug'], true);
-            }, collect());
 
         DB::table('users')->insert([
-            'name' => 'Admin',
-            'email' => 'admin@uniq.pro',
-            'password' => bcrypt('king6767'),
-            'permissions' => $permissions,
+            [
+                'name' => 'Admin',
+                'email' => 'admin@uniq.pro',
+                'password' => bcrypt('king6767'),
+                'roles_id' => 1
+            ],
+            [
+                'name' => 'Виктория',
+                'email' => 'moderator@uniq.pro',
+                'password' => bcrypt('king6767'),
+                'roles_id' => 2
+            ],
         ]);
     }
 }

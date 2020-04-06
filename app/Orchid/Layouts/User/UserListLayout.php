@@ -33,9 +33,24 @@ class UserListLayout extends Table
                     // Please use Blade templates.
                     // This will be a simple example: view('path', ['user' => $user])
                     $avatar = e($user->getAvatar());
-                    $name = e($user->getNameTitle());
-                    $sub = e($user->getSubTitle());
                     $route = route('platform.systems.users.edit', $user->id);
+                    switch ($user->roles->slug){
+                        case 'moderator':
+                            $style = 'bg-warning text-black';
+                            break;
+                        case 'admin':
+                            $style = 'bg-primary text-white';
+                            break;
+                        case 'user':
+                            $style = 'bg-secondary text-white';
+                            break;
+                        case 'client':
+                            $style = 'bg-success text-white';
+                            break;
+                        case 'disabled':
+                            $style = 'bg-danger text-white';
+                            break;
+                    }
 
                     return "<a href='{$route}'>
                                 <div class='d-sm-flex flex-row flex-wrap text-center text-sm-left align-items-center'>
@@ -43,8 +58,8 @@ class UserListLayout extends Table
                                       <img src='{$avatar}' class='bg-light'>
                                     </span>
                                     <div class='ml-sm-3 ml-md-0 ml-xl-3 mt-2 mt-sm-0 mt-md-2 mt-xl-0'>
-                                      <p class='mb-0'>{$name}</p>
-                                      <small class='text-xs text-muted'>{$sub}</small>
+                                      <p class='mb-0'>{$user->name}</p>
+                                      <small class='p-0 mb-2 rounded {$style}'>{$user->roles->name}</small>
                                     </div>
                                 </div>
                             </a>";
@@ -62,7 +77,9 @@ class UserListLayout extends Table
                         ->asyncParameters($user->id);
                 }),
 
-            TD::set('updated_at', __('Last edit'))
+            TD::set('last_login', __('Последний раз заходил'))->render(function (User $user){
+                return $user->last_login->diffForHumans();
+            })
                 ->sort(),
 
             TD::set('id', 'ID')

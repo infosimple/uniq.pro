@@ -45,7 +45,6 @@ class MainMenuComposer
             );
 
 
-
         // Instuments
         $this->dashboard->menu
             ->add(Menu::MAIN,
@@ -53,6 +52,29 @@ class MainMenuComposer
                     ->icon('icon-android')
                     ->route('bots.list')
                     ->title('Инструминтарий')
+            )
+            ->add(Menu::MAIN,
+                ItemMenu::label('Модерация')
+                    ->icon('icon-fire')
+                    ->route('bots.list')
+            );
+
+        $this->dashboard->menu
+            ->add(Menu::MAIN,
+                ItemMenu::label('Сайта')
+                    ->icon('icon-user')
+                    ->route('platform.systems.users')
+                    ->title('Пользователи')
+            )
+            ->add(Menu::MAIN,
+                ItemMenu::label('Вконтакте')
+                    ->icon('icon-social-vkontakte')
+                    ->route('user.vk.list')
+            )
+            ->add(Menu::MAIN,
+                ItemMenu::label('Телеграме')
+                    ->icon('icon-paper-plane')
+                    ->route('user.telegram.list')
             );
 
         // Main

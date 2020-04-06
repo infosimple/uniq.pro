@@ -110,13 +110,20 @@ class BotEditScreen extends Screen
                     ->title('ID группы')
                     ->placeholder('9525456875')
                     ->required(),
+                Input::make('bot.user_token')
+                    ->title('Токен пользователя')
+                    ->required(),
             ])
         ];
     }
 
     public function createOrUpdate(Bot $bot, Request $request)
     {
-
+        $chekBotExist = Bot::getBotSocial('vk');
+        if($chekBotExist){
+            Alert::warning('У вас уже существует бот ВК');
+            return redirect()->route('bots.list');
+        }
         $message = [
             'bot.vk_key.size' => 'Токен сообщества должен состоять из 85 символов',
             'bot.group_id.between' => 'ID группы должен состоять из 9 цифр',
@@ -128,12 +135,14 @@ class BotEditScreen extends Screen
         ], $message);
 
         $dataBot = $request->bot;
+
         $dataBot['config'] = [
             'vk_key' => $request->bot['vk_key'],
             'access_key' => $request->bot['access_key'],
             'version' => $request->bot['version'],
             'secret_key' => $request->bot['secret_key'],
-            'group_id' => $request->bot['group_id']
+            'group_id' => $request->bot['group_id'],
+            'user_token' => $request->bot['user_token']
         ];
         $dataBot['soc'] = 'vk';
         $exists = $bot->exists;

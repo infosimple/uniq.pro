@@ -106,11 +106,11 @@ class ButtonEditScreen extends Screen
                 Select::make('button.color')
                     ->title('Цвет кнопки')
                     ->options([
-                        'green' => 'Зеленый',
-                        'blue' => 'Синий',
-                        'red' => 'Красный'
+                        'positive' => 'Зеленый',
+                        'primary' => 'Синий',
+                        'negative' => 'Красный'
                     ])
-                    ->empty('Белый', 'white')
+                    ->empty('Белый', 'secondary')
                     ->required(),
                 TextArea::make('button.methods')
                     ->placeholder("message: 3\rexit\rmessagegropup")

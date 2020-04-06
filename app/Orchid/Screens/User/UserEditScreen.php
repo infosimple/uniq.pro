@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\User;
 
-use App\Orchid\Layouts\Role\RolePermissionLayout;
+use App\Core\Bot\Vk\Response\ActionResponse;
+use App\Models\Bot\Bot;
+use App\Models\Users\Social\Vk\VkUser;
 use App\Orchid\Layouts\User\UserEditLayout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Orchid\Access\UserSwitch;
+use Orchid\Platform\Models\Role;
 use Orchid\Platform\Models\User;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
@@ -18,6 +22,7 @@ use Orchid\Screen\Fields\Password;
 use Orchid\Screen\Layout;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Toast;
+use VK\Client\VKApiClient;
 
 class UserEditScreen extends Screen
 {
@@ -52,8 +57,7 @@ class UserEditScreen extends Screen
         $user->load(['roles']);
 
         return [
-            'user'       => $user,
-            'permission' => $user->getStatusPermission(),
+            'user' => $user
         ];
     }
 
@@ -102,10 +106,6 @@ class UserEditScreen extends Screen
         return [
             UserEditLayout::class,
 
-            Layout::rubbers([
-                RolePermissionLayout::class,
-            ]),
-
             Layout::modal('password', [
                 Layout::rows([
                     Password::make('password')
@@ -125,24 +125,39 @@ class UserEditScreen extends Screen
      */
     public function save(User $user, Request $request)
     {
-        $permissions = collect($request->get('permissions'))
-            ->map(function ($value, $key) {
-                return [base64_decode($key) => $value];
-            })
-            ->collapse()
-            ->toArray();
+        $data = $request->get('user');
+            $message = [
+                'user.vk_user_id.required' => 'Аккаунт Vk обязателен для модераторов',
+            ];
+            $request->validate([
+                'user.vk_user_id' => Rule::requiredIf($data['roles_id'] == Role::getIdRole('moderator'))
+            ], $message);
 
-        $user
-            ->fill($request->get('user'))
-            ->replaceRoles($request->input('user.roles'))
-            ->fill([
-                'permissions' => $permissions,
-            ])
-            ->save();
+        $user->fill($data)->save();
+        if ($data['roles_id'] == Role::getIdRole('moderator')){
+            $bot = Bot::where('soc', 'vk')->first();
+            $userVk = VkUser::find($data['vk_user_id']);
+            $userVk->update(['status' => 6]);
+            $actionResponse = new ActionResponse(
+                new VKApiClient($bot->config['version']), $bot, $userVk
+            );
+          $actionResponse->sendMessageModerator('Вы успешно добавлены, как модератор в систему UNIQ.pro. Все уведомления будут присылаться сюда.
+          В случае не выполнения задания в течение 5 минут, оно будет передано другому модератору.
+          ');
+        }
+        if ($data['roles_id'] == Role::getIdRole('admin')){
+            $bot = Bot::where('soc', 'vk')->first();
+            $userVk = VkUser::find($data['vk_user_id']);
+            $userVk->update(['status' => 7]);
+            $actionResponse = new ActionResponse(
+                new VKApiClient($bot->config['version']), $bot, $userVk
+            );
+            $actionResponse->sendMessageModerator('Вы успешно добавлены, как администратор в систему UNIQ.pro.');
+        }
 
         Toast::info(__('User was saved.'));
 
-        return redirect()->route('platform.systems.users');
+        return redirect()->route('platform.systems.users.edit', $user->id);
     }
 
     /**

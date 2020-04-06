@@ -149,3 +149,15 @@ Breadcrumbs::for('bot.messagegroup.edit', function (BreadcrumbsGenerator $trail,
     $trail->parent('bot.messagegroup.list', $bot);
     $trail->push(__($msg), route('bot.messagegroup.edit', $bot));
 });
+
+// Users Vk List
+Breadcrumbs::for('user.vk.list', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('platform.index');
+    $trail->push('Пользователи VK', route('user.vk.list'));
+});
+
+// Users Vk List
+Breadcrumbs::for('user.vk.edit', function (BreadcrumbsGenerator $trail, $id) {
+    $trail->parent('user.vk.list');
+    $trail->push('Пользователь', route('user.vk.edit', $id));
+});

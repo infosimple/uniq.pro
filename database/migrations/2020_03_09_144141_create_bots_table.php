@@ -18,7 +18,6 @@ class CreateBotsTable extends Migration
             $table->string('name');
             $table->string('soc');
             $table->jsonb('config');
-            $table->timestamps();
         });
     }
 

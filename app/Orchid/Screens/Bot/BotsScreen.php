@@ -32,6 +32,8 @@ class BotsScreen extends Screen
      */
     public function query(): array
     {
+        // Moderation::approveTasks(3, 60);
+        //(new ModerationVkCron())->addTaskRegion();
         return [
             'bot' => Bot::with(['button', 'keyboard', 'message', 'messagegroup'])->paginate(10)
         ];
@@ -44,17 +46,24 @@ class BotsScreen extends Screen
      */
     public function commandBar(): array
     {
-        return [
-            Link::make('Telegram бот')
-                ->route('bot.telegram.create')
-                ->icon('icon-plus')
-                ->class('btn btn-info'),
-
-            Link::make('Вконтакте бот')
+        $buttons = [];
+        $bots = Bot::all();
+        $vkBot = $bots->where('soc', 'vk')->first();
+        $telegramBot = $bots->where('soc', 'telegram')->first();
+        if (!$vkBot) {
+            $buttons[] = Link::make('Вконтакте бот')
                 ->route('bot.vk.create')
                 ->icon('icon-plus')
-                ->class('btn btn-success')
-        ];
+                ->class('btn btn-success');
+        }
+        if (!$telegramBot) {
+            $buttons[] = Link::make('Telegram бот')
+                ->route('bot.telegram.create')
+                ->icon('icon-plus')
+                ->class('btn btn-info');
+        }
+
+        return $buttons;
     }
 
     /**

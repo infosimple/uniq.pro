@@ -13,7 +13,6 @@ class CreateOrchidUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->timestamp('last_login')->nullable();
-            $table->jsonb('permissions')->nullable();
         });
     }
 
@@ -28,13 +27,11 @@ class CreateOrchidUsersTable extends Migration
         // Fallback for sqlite
         if ($driver === 'sqlite') {
             Schema::dropIfExists('users');
-
             return;
         }
 
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('last_login');
-            $table->dropColumn('permissions');
         });
     }
 }
