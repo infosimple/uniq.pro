@@ -19,10 +19,14 @@ use App\Orchid\Screens\Bot\KeyBoard\KeyBoardListScreen;
 use App\Orchid\Screens\Bot\KeyBoard\KeyBoardEditScreen;
 use App\Orchid\Screens\Bot\Message\MessageListScreen;
 use App\Orchid\Screens\Bot\Message\MessageEditScreen;
+use App\Orchid\Screens\Bot\EventMessage\EventMessageListScreen;
+use App\Orchid\Screens\Bot\EventMessage\EventMessageEditScreen;
 use App\Orchid\Screens\Bot\MessageGroup\MessageGroupListScreen;
 use App\Orchid\Screens\Bot\MessageGroup\MessageGroupEditScreen;
 use App\Orchid\Screens\Bot\Vk\Users\VkUserEditScreen;
 use App\Orchid\Screens\Bot\Vk\Users\VkUserListScreen;
+use App\Orchid\Screens\Site\Moderation\ModerationEditScreen;
+use App\Orchid\Screens\Site\Moderation\ModerationListScreen;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,18 +71,27 @@ $this->router->screen('bot/{bot}/keyboard/{id?}', KeyBoardEditScreen::class)->na
 $this->router->screen('bot/{bot}/messages', MessageListScreen::class)->name('bot.message.list');
 $this->router->screen('bot/{bot}/message/{id?}', MessageEditScreen::class)->name('bot.message.edit');
 
+// EventMessage
+$this->router->screen('bot/{bot}/event-messages', EventMessageListScreen::class)->name('bot.eventMessage.list');
+$this->router->screen('bot/{bot}/event-message/{id?}', EventMessageEditScreen::class)->name('bot.eventMessage.edit');
+
 // MessageGroup
 $this->router->screen('bot/{bot}/messagegroups', MessageGroupListScreen::class)->name('bot.messagegroup.list');
 $this->router->screen('bot/{bot}/messagegroup/{id?}', MessageGroupEditScreen::class)->name('bot.messagegroup.edit');
-
-$this->router->screen('bot/telegram/{bot}', TelegramBotEditScreen::class)->name('bot.telegram.edit');
-$this->router->screen('bot/telegram', TelegramBotEditScreen::class)->name('bot.telegram.create');
 
 $this->router->screen('bot/vk/{bot}', VkBotEditScreen::class)->name('bot.vk.edit');
 $this->router->screen('bot/vk', VkBotEditScreen::class)->name('bot.vk.create');
 
 $this->router->screen('vk/user/{id}', VkUserEditScreen::class)->name('user.vk.edit');
 $this->router->screen('vk/users', VkUserListScreen::class)->name('user.vk.list');
+
+// Moderation Tasks
+$this->router->screen('moderation/task/{id}', ModerationEditScreen::class)->name('moderation.edit');
+$this->router->screen('moderation/tasks', ModerationListScreen::class)->name('moderation.list');
+
+
+$this->router->screen('bot/telegram/{bot}', TelegramBotEditScreen::class)->name('bot.telegram.edit');
+$this->router->screen('bot/telegram', TelegramBotEditScreen::class)->name('bot.telegram.create');
 
 $this->router->screen('telegram/user/{id}', TelegramUserEditScreen::class)->name('user.telegram.edit');
 $this->router->screen('telegram/users', TelegramUserListScreen::class)->name('user.telegram.list');

@@ -8,22 +8,17 @@ trait RoleTrait
 {
     public function setClicker()
     {
-        return $this->editRole(IRoles::ROLE_CLICKER);
+        return $this->editRole(IRoles::CLICKER);
     }
 
     public function setModerator()
     {
-        return $this->editRole(IRoles::ROLE_MODERATOR);
+        return $this->editRole(IRoles::MODERATOR);
     }
 
     public function setAdmin()
     {
-        return $this->editRole(IRoles::ROLE_ADMIN);
-    }
-
-    public function setClient()
-    {
-        return $this->editRole(IRoles::ROLE_CLIENT);
+        return $this->editRole(IRoles::ADMIN);
     }
 
     private function editRole(int $role)

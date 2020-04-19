@@ -39,8 +39,6 @@ class MessageGroupEditScreen extends Screen
 
         if ($this->exists) {
             $this->name = 'Изменение группы сообщений: ' . $messageGroup->name;
-            $messageGroup->messages = json_decode($messageGroup->messages);
-            // dd($messageGroup);
         }
         $this->id = $request->bot;
         $this->description = Bot::find($this->id)->name;
@@ -99,46 +97,6 @@ class MessageGroupEditScreen extends Screen
                     ->title('Название группы сообщений')
                     ->placeholder('Рассылка задания')
                     ->required(),
-                Select::make('messagegroup.messages.0')
-                    ->title('Сообщение 1')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
-                Select::make('messagegroup.messages.1')
-                    ->title('Сообщение 2')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
-                Select::make('messagegroup.messages.2')
-                    ->title('Сообщение 3')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
-                Select::make('messagegroup.messages.3')
-                    ->title('Сообщение 4')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
-                Select::make('messagegroup.messages.4')
-                    ->title('Сообщение 5')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
-                Select::make('messagegroup.messages.5')
-                    ->title('Сообщение 6')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
-                Select::make('messagegroup.messages.6')
-                    ->title('Сообщение 7')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
-                Select::make('messagegroup.messages.7')
-                    ->title('Сообщение 8')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
-                Select::make('messagegroup.messages.8')
-                    ->title('Сообщение 9')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
-                Select::make('messagegroup.messages.9')
-                    ->title('Сообщение 10')
-                    ->fromQuery(Message::where('bot_id', $this->id), 'name')
-                    ->empty(),
             ])
         ];
     }
@@ -147,20 +105,8 @@ class MessageGroupEditScreen extends Screen
     {
 
         $data = $request->messagegroup;
-        $cnt = collect($data['messages'])
-            ->filter()
-            ->count();
-        if($cnt < 2){
-            Alert::error('В группе должно быть не менее 2 сообщений');
-            return back();
-        }
-
-        $data['messages'] = collect($data['messages'])
-            ->filter()
-            ->values()
-            ->toJson();
-
         $messageGroup->fill($data)->save();
+
         if ($request->id == 'createOrUpdate') {
             Alert::info('Вы успешно создали группу сообщений: ' . $data['name']);
             return redirect()->route('bot.messagegroup.list', $request->bot);

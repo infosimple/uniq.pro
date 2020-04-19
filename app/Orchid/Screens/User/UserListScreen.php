@@ -8,7 +8,7 @@ use App\Orchid\Layouts\User\UserEditLayout;
 use App\Orchid\Layouts\User\UserFiltersLayout;
 use App\Orchid\Layouts\User\UserListLayout;
 use Illuminate\Http\Request;
-use Orchid\Platform\Models\User;
+use App\Models\Users\Site\User;
 use Orchid\Screen\Layout;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Toast;
@@ -42,7 +42,7 @@ class UserListScreen extends Screen
     public function query(): array
     {
         return [
-            'users' => User::with(['roles', 'vkuser'])
+            'users' => User::with(['roles', 'vkAccount' /*, 'telegramAccount', 'watsupAccount' */ ])
                 ->filters()
                 ->filtersApplySelection(UserFiltersLayout::class)
                 ->defaultSort('id', 'desc')

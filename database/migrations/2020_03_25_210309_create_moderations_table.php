@@ -15,10 +15,11 @@ class CreateModerationsTable extends Migration
     {
         Schema::create('moderations', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('type');
             $table->jsonb('data');
-            $table->bigInteger('moderator_id')->nullable();
+            $table->jsonb('result')->nullable();
+            $table->integer('moderator_task_id')->nullable();
             $table->integer('status')->default(0);
-            $table->timestamp('deadline')->nullable();
             $table->timestamps();
         });
     }

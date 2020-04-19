@@ -134,6 +134,22 @@ Breadcrumbs::for('bot.message.edit', function (BreadcrumbsGenerator $trail, $bot
     $trail->push(__($msg), route('bot.message.edit', $bot));
 });
 
+// Bot EventMessages List
+Breadcrumbs::for('bot.eventMessage.list', function (BreadcrumbsGenerator $trail, $bot) {
+    $trail->parent('bots.list');
+    $trail->push(__('Событийные сообщения бота'), route('bot.eventMessage.list', $bot));
+});
+
+// Bot EventMessages Create/Update
+Breadcrumbs::for('bot.eventMessage.edit', function (BreadcrumbsGenerator $trail, $bot, $id = null) {
+    $msg = 'Создание событийного сообщения';
+    if ($id) {
+        $msg = 'Изменение событийного сообщения';
+    }
+    $trail->parent('bot.eventMessage.list', $bot);
+    $trail->push(__($msg), route('bot.eventMessage.edit', $bot));
+});
+
 // Bot MessageGroup List
 Breadcrumbs::for('bot.messagegroup.list', function (BreadcrumbsGenerator $trail, $bot) {
     $trail->parent('bots.list');
@@ -156,8 +172,20 @@ Breadcrumbs::for('user.vk.list', function (BreadcrumbsGenerator $trail) {
     $trail->push('Пользователи VK', route('user.vk.list'));
 });
 
-// Users Vk List
+// Users Vk Create/Update
 Breadcrumbs::for('user.vk.edit', function (BreadcrumbsGenerator $trail, $id) {
     $trail->parent('user.vk.list');
     $trail->push('Пользователь', route('user.vk.edit', $id));
+});
+
+// Moderation List
+Breadcrumbs::for('moderation.list', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('platform.index');
+    $trail->push('Список задач', route('moderation.list'));
+});
+
+// Moderation execute
+Breadcrumbs::for('moderation.edit', function (BreadcrumbsGenerator $trail, $id) {
+    $trail->parent('moderation.list');
+    $trail->push('Задача', route('moderation.edit', $id));
 });

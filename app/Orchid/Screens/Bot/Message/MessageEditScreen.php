@@ -2,18 +2,18 @@
 
 namespace App\Orchid\Screens\Bot\Message;
 
+use App\Http\Requests\MessageRequest;
 use App\Models\Bot\Bot;
 use App\Models\Bot\KeyBoard;
 use App\Models\Bot\Message;
+use App\Models\Bot\MessageGroup;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
-use Orchid\Screen\Fields\Quill;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\SimpleMDE;
 use Orchid\Screen\Fields\TextArea;
-use Orchid\Screen\Fields\TinyMCE;
 use Orchid\Screen\Layout;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
@@ -95,22 +95,25 @@ class MessageEditScreen extends Screen
                 Input::make('message.bot_id')
                     ->type('hidden')
                     ->value($this->id),
-                Input::make('message.name')
+                Input::make('message.title')
                     ->title('Название сообщения')
                     ->placeholder('Приветсвтие')
                     ->required(),
-                SimpleMDE::make('message.text')
-                    ->title('Текст сообщения')
-                    ->placeholder('Добро пожаловать мой друг'),
+                Input::make('message.name')
+                    ->title('Вызываемая фраза')
+                    ->placeholder('askInvite')
+                    ->required(),
+                Select::make('message.group_id')
+                    ->title('Группа сообщений')
+                    ->fromModel(MessageGroup::class, 'name')
+                    ->empty(),
                 Select::make('message.keyboard_id')
                     ->title('Клавиатура')
                     ->fromQuery(KeyBoard::where('bot_id', $this->id), 'name')
                     ->empty(),
-                Input::make('message.method')
-                    ->title('Метод обработки сообщения')
-                    ->help("email или start"),
-                TextArea::make('message.method_text')
-                    ->title('Текст если не выполнен метод')
+                SimpleMDE::make('message.text')
+                    ->title('Текст сообщения')
+                    ->placeholder('Добро пожаловать мой друг'),
             ])
         ];
     }
@@ -120,7 +123,7 @@ class MessageEditScreen extends Screen
         $data = $request->message;
         $message->fill($data)->save();
         if ($request->id == 'createOrUpdate') {
-            Alert::info('Вы успешно создали сообщение: ' . $data['name']);
+            Alert::info('Вы успешно создали сообщение: ' . $data['title']);
             return redirect()->route('bot.message.list', $request->bot);
         } else {
             Alert::info('Вы успешно изменили сообщение');

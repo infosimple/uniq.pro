@@ -54,6 +54,11 @@ class BotListLayout extends Table
                     return Link::make($bot->message->count())
                         ->route('bot.message.list', $bot->id);
                 }),
+            TD::set('', 'Событийные сообщения')
+                ->render(function (Bot $bot) {
+                    return Link::make($bot->eventMessage->count())
+                        ->route('bot.eventMessage.list', $bot->id);
+                }),
             TD::set('', 'Группы сообщений')
                 ->render(function (Bot $bot) {
                     return Link::make($bot->messagegroup->count())

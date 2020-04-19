@@ -14,7 +14,15 @@ class MessageGroup extends Model
 
     protected $fillable = [
         'name',
-        'messages',
         'bot_id'
     ];
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'group_id')->where('bot_id', $this->bot_id)->get();
+    }
+    public function eventMessages()
+    {
+        return $this->hasMany(EventMessage::class, 'group_id')->where('bot_id', $this->bot_id)->get();
+    }
 }

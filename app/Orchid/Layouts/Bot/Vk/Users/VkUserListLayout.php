@@ -2,6 +2,8 @@
 
 namespace App\Orchid\Layouts\Bot\Vk\Users;
 
+use App\Models\Users\Social\IRoles;
+use App\Models\Users\Social\IStatuses;
 use App\Models\Users\Social\Vk\VkUser;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Layouts\Table;
@@ -41,6 +43,20 @@ class VkUserListLayout extends Table
                                 </div>
                             </a>";
                 }),
+            TD::set('role', 'Роль')
+                ->render(function (VkUser $user) {
+                    switch ($user->role){
+                        case IRoles::USER:
+                            return '<span>Неизвестный</span>';
+                        case IRoles::CLICKER:
+                            return '<span class="p-1 mb-2 bg-success rounded text-white">Кликер</span>';
+                        case IRoles::MODERATOR:
+                            return '<span class="p-1 mb-2 bg-warning rounded text-dark">Модератор</span>';
+                        case IRoles::ADMIN:
+                            return '<span class="p-1 mb-2 bg-primary rounded text-white">Админ</span>';
+                    }
+                }),
+
             TD::set('region', 'Регион')
                 ->render(function (VkUser $user) {
                     if($user->region){
@@ -66,21 +82,20 @@ class VkUserListLayout extends Table
             TD::set('status', 'Статус')
                 ->render(function (VkUser $user) {
                     switch ($user->status){
-                        case 0:
-                            return '<span>Неизвестный</span>';
-                        case 1:
-                            return '<span class="p-1 mb-2 bg-warning rounded text-dark">Модерация</span>';
-                        case 2:
-                            return '<span class="p-1 mb-2 bg-secondary rounded text-white">Приглашен</span>';
-                        case 3:
+                        case IStatuses::NOT_ACTIVATE:
+                            return '<span>Не активирован</span>';
+                        case IStatuses::MODERATION:
+                            return '<span class="p-1 mb-2 bg-warning rounded text-dark">На модерации</span>';
+                        case IStatuses::ACTIVATE:
                             return '<span class="p-1 mb-2 bg-success rounded text-white">Активирован</span>';
-                        case 4:
-                            return '<span class="p-1 mb-2 bg-primary rounded text-white">Занят</span>';
-                        case 5:
-                            return '<span class="p-1 mb-2 bg-danger rounded text-white">Не прошел модерацию</span>';
+                        case IStatuses::DISABLED:
+                            return '<span class="p-1 mb-2 bg-danger rounded text-white">Отключен</span>';
                     }
                 }),
-            TD::set('last_run_at', 'Работал')
+            TD::set('update_at', __('Последняя активность'))->render(function (VkUser $user){
+                return $user->updated_at ?  $user->updated_at->diffForHumans() : '<span class="icon-ban"></span>';
+            })
+                ->sort(),
         ];
     }
 }

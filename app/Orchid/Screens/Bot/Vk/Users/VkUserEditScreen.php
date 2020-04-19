@@ -2,12 +2,15 @@
 
 namespace App\Orchid\Screens\Bot\Vk\Users;
 
-use App\Models\Region;
+use App\Models\Site\Region;
+use App\Models\Users\Social\IRoles;
+use App\Models\Users\Social\IStatuses;
 use App\Models\Users\Social\Vk\VkUser;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\Relation;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Layout;
@@ -19,9 +22,18 @@ class VkUserEditScreen extends Screen
 
     public $name = 'Изменение пользователя';
     public $description = '';
+    protected $params;
 
     public function query(VkUser $user): array
     {
+        if ($user->params) {
+            foreach ($user->params as $key => $value) {
+                $this->params .= "$key: $value\n";
+            }
+            $user->params = $this->params;
+        }
+
+        $user->load(['region', 'invite'])->get();
         $this->description = $user->name;
         return [
             'user' => $user
@@ -66,22 +78,29 @@ class VkUserEditScreen extends Screen
                 Input::make('user.vk_id')
                     ->title('Id пользователя')
                     ->required(),
+                Select::make('user.role')
+                    ->title('Роль пользователя')
+                    ->options([
+                        IRoles::USER => 'Неизвестный',
+                        IRoles::CLICKER => 'Кликер',
+                        IRoles::MODERATOR => 'Модератор',
+                        IRoles::ADMIN => 'Админ'
+                    ])
+                    ->required(),
                 Select::make('user.status')
                     ->title('Статус пользователя')
                     ->options([
-                        0 => 'Добавлен',
-                        1 => 'На модерации',
-                        2 => 'Приглашен',
-                        3 => 'Активирован',
-                        4 => 'Выполняет задание',
-                        5 => 'Отключен'
+                        IStatuses::NOT_ACTIVATE => 'Не активирован',
+                        IStatuses::MODERATION => 'На модерации',
+                        IStatuses::ACTIVATE => 'Активирован',
+                        IStatuses::DISABLED => 'Отключен'
                     ])
                     ->required(),
-                Select::make('user.referral')
-                    ->title('У кого в рефералах')
-                    ->fromModel(VkUser::class, 'name')
-                    ->empty(''),
-                Select::make('user.region')
+                Relation::make('user.referral')
+                    ->fromModel(VkUser::class, 'vk_id')
+                    ->displayAppend('name')
+                    ->title('У кого в рефералах'),
+                Select::make('user.region_id')
                     ->title('Регион')
                     ->fromModel(Region::class, 'name')
                     ->empty(''),
@@ -93,10 +112,12 @@ class VkUserEditScreen extends Screen
         ];
     }
 
-    public function update(Request $request, VkUser $user)
+    public function update(VkUser $user, Request $request)
     {
+
         $dataUser = $request->user; //Получаем все данные кнопки
-        $user->fill($dataUser)->save();
+        unset($dataUser['params']);
+        $user->update($dataUser);
 
         Alert::info('Вы успешно изменили пользователя ВК');
         return redirect()->route('user.vk.edit', $user->id);

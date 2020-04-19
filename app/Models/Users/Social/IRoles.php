@@ -6,9 +6,8 @@ namespace App\Models\Users\Social;
 
 interface IRoles
 {
-    const ROLE_USER = 0;
-    const ROLE_CLICKER = 1;
-    const ROLE_MODERATOR = 2;
-    const ROLE_ADMIN = 3;
-    const ROLE_CLIENT = 4;
+    const USER = 0;
+    const CLICKER = 1;
+    const MODERATOR = 2;
+    const ADMIN = 3;
 }

@@ -15,6 +15,10 @@ class CreateModeratorTasksTable extends Migration
     {
         Schema::create('moderator_tasks', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('user_id')->comment('Moderator');
+            $table->integer('moderation_id');
+            $table->integer('status')->default(0);
+            $table->timestamp('deadline')->nullable();
             $table->timestamps();
         });
     }

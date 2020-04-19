@@ -12,6 +12,7 @@ use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Layout;
 use Orchid\Screen\Screen;
+use App\Http\Requests\KeyBoardRequest;
 use Orchid\Support\Facades\Alert;
 
 class KeyBoardEditScreen extends Screen
@@ -37,7 +38,7 @@ class KeyBoardEditScreen extends Screen
 
         if ($this->exists) {
             $this->name = 'Изменение клавиатуры: ' . $keyboard->name;
-            $keyboard->buttons = json_decode($keyboard->buttons);
+            $keyboard->buttons = $keyboard->buttons;
         }
         $this->id = $request->bot;
         $this->description = Bot::find($this->id)->name;
@@ -95,10 +96,14 @@ class KeyBoardEditScreen extends Screen
                 Input::make('keyboard.bot_id')
                     ->type('hidden')
                     ->value($this->id),
-                Input::make('keyboard.name')
+                Input::make('keyboard.title')
                     ->title('Название клавиатуры')
                     ->placeholder('Главная клава')
                     ->help('Укажите название будущей клавиатуры')
+                    ->required(),
+                Input::make('keyboard.name')
+                    ->title('Вызываемая фраза')
+                    ->placeholder('home')
                     ->required(),
                 Select::make('keyboard.buttons.0.')
                     ->multiple()
@@ -126,19 +131,9 @@ class KeyBoardEditScreen extends Screen
         ];
     }
 
-    public function createOrUpdate(Request $request, KeyBoard $keyboard)
+    public function createOrUpdate(KeyBoardRequest $request, KeyBoard $keyboard)
     {
-        $message = [
-            'keyboard.buttons.required' => 'Необходимо выбрать хотябы одну кнопку',
-            'keyboard.buttons.*.max' => 'Не более :max кнопок в строке',
-        ];
-        $request->validate([
-            'keyboard.buttons.*' => 'max:4',
-           'keyboard.buttons' => 'required'
-        ], $message);
-
         $data = $request->keyboard; //Получаем все данные клавиатуры
-        $data['buttons'] = collect($data['buttons'])->values()->toJson(); //декодируем кнопки в json
         $keyboard->fill($data)->save();
 
 

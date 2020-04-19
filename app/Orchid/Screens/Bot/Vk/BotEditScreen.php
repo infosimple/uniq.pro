@@ -2,10 +2,12 @@
 
 namespace App\Orchid\Screens\Bot\Vk;
 
+use App\Http\Requests\BotVkRequest;
 use App\Models\Bot\Bot;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Layout;
 use Orchid\Screen\Screen;
@@ -82,70 +84,70 @@ class BotEditScreen extends Screen
      */
     public function layout(): array
     {
-        //Форма вк бота
         return [
-            Layout::rows([
-                Input::make('bot.name')
-                    ->title('Название бота')
-                    ->placeholder('ВК бот')
-                    ->required(),
-                Input::make('bot.vk_key')
-                    ->title('Токен сообщества')
-                    ->placeholder('9961ea153f0b1cd0b1425f0b3ddca77f85d155614cd5257ab403824b4709377a19cc7e661cd638fc04867')
-                    ->required(),
-                Input::make('bot.access_key')
-                    ->title('Ключ доступа')
-                    ->placeholder('c8e976d6')
-                    ->help('Строка, которую должен вернуть сервер')
-                    ->required(),
-                Input::make('bot.version')
-                    ->title('Версия API VK')
-                    ->placeholder('5.81')
-                    ->required(),
-                Input::make('bot.secret_key')
-                    ->title('Секретный ключ')
-                    ->placeholder('fdget345f')
-                    ->required(),
-                Input::make('bot.group_id')
-                    ->title('ID группы')
-                    ->placeholder('9525456875')
-                    ->required(),
-                Input::make('bot.user_token')
-                    ->title('Токен пользователя')
-                    ->required(),
-            ])
+            Layout::tabs([
+                'Основное' => Layout::rows([
+                    Input::make('bot.name')
+                        ->title('Название бота')
+                        ->placeholder('ВК бот')
+                        ->required(),
+                    Input::make('bot.vk_key')
+                        ->title('Токен сообщества')
+                        ->placeholder('9961ea153f0b1cd0b1425f0b3ddca77f85d155614cd5257ab403824b4709377a19cc7e661cd638fc04867')
+                        ->required(),
+                    Input::make('bot.access_key')
+                        ->title('Ключ доступа')
+                        ->placeholder('c8e976d6')
+                        ->help('Строка, которую должен вернуть сервер')
+                        ->required(),
+                    Input::make('bot.version')
+                        ->title('Версия API VK')
+                        ->placeholder('5.81')
+                        ->required(),
+                    Input::make('bot.secret_key')
+                        ->title('Секретный ключ')
+                        ->placeholder('fdget345f')
+                        ->required(),
+                    Input::make('bot.group_id')
+                        ->title('ID группы')
+                        ->placeholder('9525456875')
+                        ->required(),
+                    Input::make('bot.user_token')
+                        ->title('Токен пользователя')
+                        ->required(),
+                ]),
+                'Доступ к боту' => Layout::rows([
+                    CheckBox::make('bot.invite')
+                        ->sendTrueOrFalse()
+                        ->placeholder('Только по инвайту'),
+
+                    Input::make('bot.vk_days')
+                        ->title('Время существования аккаунта в днях')
+                        ->required(),
+
+                ]),
+            ]),
+
+
         ];
     }
 
-    public function createOrUpdate(Bot $bot, Request $request)
+    public function createOrUpdate(Bot $bot, BotVkRequest $request)
     {
         $chekBotExist = Bot::getBotSocial('vk');
-        if($chekBotExist){
+        $exists = $bot->exists;
+        if ($chekBotExist AND !$exists) {
             Alert::warning('У вас уже существует бот ВК');
             return redirect()->route('bots.list');
         }
-        $message = [
-            'bot.vk_key.size' => 'Токен сообщества должен состоять из 85 символов',
-            'bot.group_id.between' => 'ID группы должен состоять из 9 цифр',
-            'bot.group_id.integer' => 'ID группы должен состоять только из цифр',
-        ];
-        $request->validate([
-            'bot.vk_key' => 'size:85',
-            'bot.group_id' => 'integer|between:000000001,999999999'
-        ], $message);
 
         $dataBot = $request->bot;
-
-        $dataBot['config'] = [
-            'vk_key' => $request->bot['vk_key'],
-            'access_key' => $request->bot['access_key'],
-            'version' => $request->bot['version'],
-            'secret_key' => $request->bot['secret_key'],
-            'group_id' => $request->bot['group_id'],
-            'user_token' => $request->bot['user_token']
-        ];
+        $config = collect($dataBot)
+            ->filter(function ($value, $key) {
+                return $key !== 'name';
+            })->toArray();
+        $dataBot['config'] = $config;
         $dataBot['soc'] = 'vk';
-        $exists = $bot->exists;
         $bot->fill($dataBot)->save();
         if (!$exists) {
             Alert::info('Вы успешно создали Vk бота: ' . $request->bot['name']);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens;
 
+use App\Models\Users\Site\User;
 use Orchid\Platform\Dashboard;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Layout;
@@ -44,6 +45,7 @@ class PlatformScreen extends Screen
      */
     public function commandBar(): array
     {
+        dd(User::moderators());
         return [
             Link::make('Website')
                 ->href('http://orchid.software')

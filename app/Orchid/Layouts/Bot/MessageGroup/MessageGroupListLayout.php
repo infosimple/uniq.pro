@@ -27,18 +27,25 @@ class MessageGroupListLayout extends Table
     protected function columns(): array
     {
         return [
+            TD::set('id', 'ID'),
+
             TD::set('name', 'Название')
                 ->render(function (MessageGroup $messagegroup) {
                     return Link::make($messagegroup->name)
                         ->route('bot.messagegroup.edit', [$messagegroup->bot_id, $messagegroup->id]);
                 }),
-            TD::set('name', 'Сообщения')
-                ->render(
-                    function (MessageGroup $messagegroup)
-                    {
-                        return $messagegroup->messages;
-                    }
-                ),
+
+            TD::set('messages', 'Количество сообщений')
+                ->render(function (MessageGroup $messagegroup) {
+                    return Link::make($messagegroup->messages()->count())
+                        ->route('bot.message.list', [$messagegroup->bot_id, 'filter[group_id]' => $messagegroup->id]);
+                }),
+
+            TD::set('messages', 'Количество событийных сообщений')
+                ->render(function (MessageGroup $messagegroup) {
+                    return Link::make($messagegroup->eventMessages()->count())
+                        ->route('bot.eventMessage.list', [$messagegroup->bot_id, 'filter[group_id]' => $messagegroup->id]);
+                }),
 
             TD::set('id', 'Действия')
                 ->align(TD::ALIGN_CENTER)

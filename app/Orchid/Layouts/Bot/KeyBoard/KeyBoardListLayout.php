@@ -16,7 +16,7 @@ class KeyBoardListLayout extends Table
      *
      * @var string
      */
-    protected $target = 'keyboard';
+    protected $target = 'key_boards';
 
     /**
      * @return TD[]
@@ -26,15 +26,14 @@ class KeyBoardListLayout extends Table
 
 
         return [
-            TD::set('name', 'Название')
+            TD::set('title', 'Название')
                 ->render(function (KeyBoard $keyboard) {
-                    return Link::make($keyboard->name)
+                    return Link::make($keyboard->title)
                         ->route('bot.keyboard.edit', [$keyboard->bot_id, $keyboard->id]);
                 }),
-
-            TD::set('name', 'Кнопки')
+            TD::set('name', 'Вызываемое фраза')
                 ->render(function (KeyBoard $keyboard) {
-                    return $keyboard->buttons;
+                    return $keyboard->name;
                 }),
 
             TD::set('id', 'Действия')

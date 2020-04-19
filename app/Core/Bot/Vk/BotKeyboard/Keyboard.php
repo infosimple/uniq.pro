@@ -1,9 +1,11 @@
 <?php
 namespace App\Core\Bot\Vk\BotKeyboard;
 
-class Keyboard
-{
+use Illuminate\Database\Eloquent\Model;
 
+class Keyboard extends Model
+{
+    protected $table = 'key_boards';
     private $keyboard = [];
     private $oneTime = false;
 

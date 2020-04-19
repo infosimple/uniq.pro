@@ -16,7 +16,7 @@ class RolesTableSeeder extends Seeder
                 'name' => 'Администратор',
                 'slug' => 'admin',
                 'permissions' => '{"platform.index": "1", "platform.systems.index": "1", "platform.systems.roles": "1", "platform.systems.users": "1", "platform.systems.attachment": "1"}'
-            ],
+           ],
             [
                 'name' => 'Модератор',
                 'slug' => 'moderator',
@@ -35,7 +35,7 @@ class RolesTableSeeder extends Seeder
             [
                 'name' => 'Отключен',
                 'slug' => 'disabled',
-                'permissions' => ''
+                'permissions' => '{"platform.index": "0", "platform.systems.index": "0", "platform.systems.roles": "0", "platform.systems.users": "0", "platform.systems.attachment": "0"}'
             ]
         ]);
     }

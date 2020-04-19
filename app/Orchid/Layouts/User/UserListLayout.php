@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Orchid\Layouts\User;
 
-use Orchid\Platform\Models\User;
+use App\Models\Users\Site\User;
+use App\Models\Users\Social\IStatuses;
+use App\Models\Users\Social\Vk\VkUser;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
@@ -65,6 +67,24 @@ class UserListLayout extends Table
                             </a>";
                 }),
 
+            TD::set('status', 'Статус')
+                ->render(function (User $user) {
+                    switch ($user->status){
+                        case IStatuses::NOT_ACTIVATE:
+                            return '<span>Не активирован</span>';
+                        case IStatuses::MODERATION:
+                            return '<span class="p-1 mb-2 bg-warning rounded text-dark">На модерации</span>';
+                        case IStatuses::ACTIVATE:
+                            return '<span class="p-1 mb-2 bg-success rounded text-white">Активирован</span>';
+                        case IStatuses::DISABLED:
+                            return '<span class="p-1 mb-2 bg-danger rounded text-white">Отключен</span>';
+                        case IStatuses::BUSY:
+                            return '<span class="p-1 mb-2 bg-dark rounded text-white">Занят</span>';
+                        case IStatuses::FREE:
+                            return '<span class="p-1 mb-2 bg-info rounded text-white">Свободен</span>';
+                    }
+                }),
+
             TD::set('email', __('Email'))
                 ->sort()
                 ->canHide()
@@ -78,7 +98,10 @@ class UserListLayout extends Table
                 }),
 
             TD::set('last_login', __('Последний раз заходил'))->render(function (User $user){
-                return $user->last_login->diffForHumans();
+                if($user->online()){
+                    return '<span class="p-1 mb-2 bg-success rounded text-white">Online</span>';
+                }
+                   return $user->last_login ?  $user->last_login->diffForHumans() : '<span class="icon-ban"></span>';
             })
                 ->sort(),
 

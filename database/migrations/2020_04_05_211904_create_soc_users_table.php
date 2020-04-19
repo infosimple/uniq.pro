@@ -15,10 +15,15 @@ class CreateSocUsersTable extends Migration
     {
         Schema::create('soc_users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('vk_user_id')->nullable();
-            $table->integer('telegram_user_id')->nullable();
-            $table->integer('watsup_user_id')->nullable();
-            $table->timestamps();
+            $table->integer('vk_user_id')->nullable()->unsigned()->index();
+            $table->integer('telegram_user_id')->nullable()->unsigned()->index();
+            $table->integer('watsup_user_id')->nullable()->unsigned()->index();
+            $table->foreign('vk_user_id')->references('id')->on('vk_user')
+                ->onDelete('cascade');
+            $table->foreign('telegram_user_id')->references('id')->on('telegram_user')
+                ->onDelete('cascade');
+            $table->foreign('watsup_user_id')->references('id')->on('watsup_user')
+                ->onDelete('cascade');
         });
     }
 

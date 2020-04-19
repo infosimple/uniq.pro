@@ -10,11 +10,7 @@ class KeyBoard extends Model
 {
     use AsSource, Filterable;
 
-    protected $fillable = [
-        'name',
-        'buttons',
-        'bot_id'
-    ];
+    protected $guarded = [];
 
     public $timestamps = false;
 

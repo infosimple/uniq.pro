@@ -28,7 +28,7 @@ class KeyBoardListScreen extends Screen
         $this->description = Bot::find($this->id)->name;
 
         return [
-            'keyboard' => KeyBoard::where('bot_id', $this->id)->paginate(10)
+            'key_boards' => KeyBoard::where('bot_id', $this->id)->paginate(10)
         ];
     }
 

@@ -24,14 +24,25 @@ class MessageListLayout extends Table
     protected function columns(): array
     {
         return [
-            TD::set('name', 'Название')
+            TD::set('title', 'Название')
                 ->render(function (Message $message) {
-                    return Link::make($message->name)
+                    return Link::make($message->title)
                         ->route('bot.message.edit', [$message->bot_id, $message->id]);
                 }),
-            TD::set('text', 'Текст сообщения')
+            TD::set('name', 'Вызываемая фраза')
+                ->align(TD::ALIGN_CENTER)
                 ->render(function (Message $message) {
-                    return mb_substr($message->text, 0, 60);
+                        return $message->name;
+                }),
+            TD::set('group_id', 'Группа')
+                ->filter(TD::FILTER_TEXT)
+                ->render(function (Message $message) {
+                    if ($message->group){
+                        return Link::make($message->group->name)
+                            ->route('bot.message.list', [$message->bot_id, 'filter[group_id]' => $message->group->id]);
+                    }else{
+                        return '<span class="icon-ban"></span>';
+                    }
                 }),
             TD::set('keyboard', 'Клавиатура')
                 ->align(TD::ALIGN_CENTER)
@@ -42,24 +53,11 @@ class MessageListLayout extends Table
                         return '<span class="icon-ban"></span>';
                     }
                 }),
-            TD::set('method', 'Метода')
-                ->align(TD::ALIGN_CENTER)
+            TD::set('text', 'Текст сообщения')
                 ->render(function (Message $message) {
-                    if ($message->method){
-                        return $message->method;
-                    }else{
-                        return '<span class="icon-ban"></span>';
-                    }
+                    return mb_substr($message->text, 0, 60);
                 }),
-            TD::set('method_text', 'Текст метода')
-                ->align(TD::ALIGN_CENTER)
-                ->render(function (Message $message) {
-                    if ($message->method_text){
-                        return mb_substr($message->method_text, 0, 60);
-                    }else{
-                        return '<span class="icon-ban"></span>';
-                    }
-                }),
+
             TD::set('id', 'Действия')
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')

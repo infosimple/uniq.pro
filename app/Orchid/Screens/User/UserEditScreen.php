@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\User;
 
-use App\Core\Bot\Vk\Response\ActionResponse;
-use App\Models\Bot\Bot;
+use App\Http\Requests\UserRequest;
+use App\Models\Users\Site\SocUser;
+use App\Models\Users\Social\IRoles;
 use App\Models\Users\Social\Vk\VkUser;
 use App\Orchid\Layouts\User\UserEditLayout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Orchid\Access\UserSwitch;
+use App\Models\Users\Site\User;
 use Orchid\Platform\Models\Role;
-use Orchid\Platform\Models\User;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
@@ -22,7 +22,6 @@ use Orchid\Screen\Fields\Password;
 use Orchid\Screen\Layout;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Toast;
-use VK\Client\VKApiClient;
 
 class UserEditScreen extends Screen
 {
@@ -54,10 +53,10 @@ class UserEditScreen extends Screen
      */
     public function query(User $user): array
     {
-        $user->load(['roles']);
-
+        $user->load(['roles', 'socAccount']);
         return [
-            'user' => $user
+            'user' => $user,
+            'soc' => $user->socAccount
         ];
     }
 
@@ -123,37 +122,46 @@ class UserEditScreen extends Screen
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function save(User $user, Request $request)
+    public function save(User $user, UserRequest $request)
     {
         $data = $request->get('user');
-            $message = [
-                'user.vk_user_id.required' => 'Аккаунт Vk обязателен для модераторов',
-            ];
-            $request->validate([
-                'user.vk_user_id' => Rule::requiredIf($data['roles_id'] == Role::getIdRole('moderator'))
-            ], $message);
-
+        $soc = $request->get('soc');
         $user->fill($data)->save();
-        if ($data['roles_id'] == Role::getIdRole('moderator')){
-            $bot = Bot::where('soc', 'vk')->first();
-            $userVk = VkUser::find($data['vk_user_id']);
-            $userVk->update(['status' => 6]);
-            $actionResponse = new ActionResponse(
-                new VKApiClient($bot->config['version']), $bot, $userVk
-            );
-          $actionResponse->sendMessageModerator('Вы успешно добавлены, как модератор в систему UNIQ.pro. Все уведомления будут присылаться сюда.
-          В случае не выполнения задания в течение 5 минут, оно будет передано другому модератору.
-          ');
+        dd($user->socAccount);
+        if(!$user->socAccount){
+            $socUser = SocUser::create($soc);
+            $user->socAccount()->associate($socUser)->save();
+        }else{
+            $user->socAccount->fill($soc)->save();
         }
-        if ($data['roles_id'] == Role::getIdRole('admin')){
-            $bot = Bot::where('soc', 'vk')->first();
-            $userVk = VkUser::find($data['vk_user_id']);
-            $userVk->update(['status' => 7]);
-            $actionResponse = new ActionResponse(
-                new VKApiClient($bot->config['version']), $bot, $userVk
-            );
-            $actionResponse->sendMessageModerator('Вы успешно добавлены, как администратор в систему UNIQ.pro.');
+
+        if($soc['vk_user_id']){
+            $userVk = VkUser::find($soc['vk_user_id']);
+            switch ($data['roles_id']){
+                case Role::getIdRole('moderator'):
+                    $userVk->update(['role' => IRoles::MODERATOR]);
+                    // ТУТ ОТПРАВКА СООБЩЕНИЯ
+                    break;
+                case Role::getIdRole('admin'):
+                    $userVk->update(['role' => IRoles::ADMIN]);
+                    // ТУТ ОТПРАВКА СООБЩЕНИЯ
+                    break;
+            }
         }
+
+
+//        if ($data['roles_id'] == Role::getIdRole('moderator')){
+//          $actionResponse->sendMessageModerator('Вы успешно добавлены, как модератор в систему UNIQ.pro. Все уведомления будут присылаться сюда.
+//          В случае не выполнения задания в течение 5 минут, оно будет передано другому модератору.
+//          ');
+//        }
+//        if ($data['roles_id'] == Role::getIdRole('admin')){
+//            $userVk = VkUser::find($data['vk_user_id']);
+//            $actionResponse = new Action(
+//                new VKApiClient($bot->config['version']), $bot, $userVk
+//            );
+//            $actionResponse->sendMessageModerator('Вы успешно добавлены, как администратор в систему UNIQ.pro.');
+//        }
 
         Toast::info(__('User was saved.'));
 

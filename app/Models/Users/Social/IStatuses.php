@@ -6,8 +6,10 @@ namespace App\Models\Users\Social;
 
 interface IStatuses
 {
-    const STATUS_NOT_ACTIVATE = 0;
-    const STATUS_MODERATION = 1;
-    const STATUS_ACTIVATE = 2;
-    const STATUS_DISABLED = 3;
+    const NOT_ACTIVATE = 0;
+    const MODERATION = 1;
+    const ACTIVATE = 2;
+    const DISABLED = 3;
+    const BUSY = 4;
+    const FREE = 5;
 }

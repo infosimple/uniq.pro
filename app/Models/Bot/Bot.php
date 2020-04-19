@@ -44,6 +44,10 @@ class Bot extends Model
     {
         return $this->hasMany(MessageGroup::class);
     }
+    public function eventMessage()
+    {
+        return $this->hasMany(EventMessage::class);
+    }
 
     public function delete()
     {
@@ -51,11 +55,15 @@ class Bot extends Model
         $this->keyboard()->delete();
         $this->message()->delete();
         $this->messagegroup()->delete();
+        $this->eventMessage()->delete();
         return parent::delete();
     }
 
-    public static function getBotSocial($soc)
+    public function scopeGetBotSocial($query, $soc)
     {
-        return static::where('soc', $soc)->first();
+        return $query->where('soc', $soc)->with(['eventMessage', 'message', 'keyboard'])->firstOrFail();
+    }
+    static public function getConfig($soc, $config){
+        return static::where('soc', $soc)->first()->config[$config];
     }
 }

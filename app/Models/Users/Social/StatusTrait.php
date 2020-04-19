@@ -8,17 +8,17 @@ trait StatusTrait
 {
     public function activate()
     {
-        return $this->editStatus(IStatuses::STATUS_ACTIVATE);
+        return $this->editStatus(IStatuses::ACTIVATE);
     }
 
     public function disabled()
     {
-        return $this->editStatus(IStatuses::STATUS_DISABLED);
+        return $this->editStatus(IStatuses::DISABLED);
     }
 
     public function moderation()
     {
-        return $this->editStatus(IStatuses::STATUS_MODERATION);
+        return $this->editStatus(IStatuses::MODERATION);
     }
 
     private function editStatus(int $status)

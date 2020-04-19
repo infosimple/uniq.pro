@@ -56,7 +56,7 @@ class MainMenuComposer
             ->add(Menu::MAIN,
                 ItemMenu::label('Модерация')
                     ->icon('icon-fire')
-                    ->route('bots.list')
+                    ->route('moderation.list')
             );
 
         $this->dashboard->menu

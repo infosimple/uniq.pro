@@ -26,7 +26,10 @@ class MessageListScreen extends Screen
         $this->id = $request->bot;
         $this->description = Bot::find($this->id)->name;
         return [
-            'message' => Message::where('bot_id', $this->id)->paginate(10)
+            'message' => Message::with(['group', 'keyboard'])
+                ->filters()
+                ->where('bot_id', $this->id)
+                ->paginate(10)
         ];
     }
 

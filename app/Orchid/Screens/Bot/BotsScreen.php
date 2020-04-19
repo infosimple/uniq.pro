@@ -32,8 +32,7 @@ class BotsScreen extends Screen
      */
     public function query(): array
     {
-        // Moderation::approveTasks(3, 60);
-        //(new ModerationVkCron())->addTaskRegion();
+
         return [
             'bot' => Bot::with(['button', 'keyboard', 'message', 'messagegroup'])->paginate(10)
         ];

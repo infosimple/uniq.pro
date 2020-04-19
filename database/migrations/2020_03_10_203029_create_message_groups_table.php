@@ -15,8 +15,7 @@ class CreateMessageGroupsTable extends Migration
     {
         Schema::create('message_groups', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->jsonb('messages'); // Json messages_id
+            $table->string('name')->unique();
             $table->integer('bot_id');
         });
     }
